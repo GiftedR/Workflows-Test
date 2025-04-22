@@ -1,0 +1,27 @@
+name: .NET CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.x'
+    - name: Restore dependencies
+      run: dotnet restore Workflows-Test.sln
+    
+    - name: Build
+      run: dotnet build Workflows-Test.sln --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test Workflows-Test.sln --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
